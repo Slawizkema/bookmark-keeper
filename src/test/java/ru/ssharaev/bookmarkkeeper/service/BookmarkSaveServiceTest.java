@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
+import ru.ssharaev.bookmarkkeeper.service.bookmark.BookmarkSaveService;
 
 import java.util.List;
 

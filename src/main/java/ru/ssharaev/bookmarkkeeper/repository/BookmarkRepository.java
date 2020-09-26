@@ -3,11 +3,10 @@ package ru.ssharaev.bookmarkkeeper.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.annotations.Query;
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import ru.ssharaev.bookmarkkeeper.model.Bookmark;
 
 
-public interface BookmarkRepository extends ElasticsearchRepository<Bookmark, String> {
+public interface BookmarkRepository {
 
     Page<Bookmark> findById(String id, Pageable pageable);
 

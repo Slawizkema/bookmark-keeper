@@ -9,7 +9,8 @@ import java.util.Set;
 @Document(indexName = "blog", type = "article")
 public class Bookmark {
     private final String messageId;
-    private final BookmarkType category;
+    private final BookmarkType type;
+    private final String category;
     private final String url;
     private final String body;
     private final Set<String> tags;

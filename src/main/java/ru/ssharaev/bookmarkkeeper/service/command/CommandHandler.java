@@ -1,4 +1,4 @@
-package ru.ssharaev.bookmarkkeeper.service;
+package ru.ssharaev.bookmarkkeeper.service.command;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 
