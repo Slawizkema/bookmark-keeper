@@ -1,15 +1,15 @@
 package ru.ssharaev.bookmarkkeeper.repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.annotations.Query;
 import ru.ssharaev.bookmarkkeeper.model.Bookmark;
+
+import java.util.List;
 
 
 public interface BookmarkRepository {
 
-    Page<Bookmark> findById(String id, Pageable pageable);
+    public void saveBookmark(Bookmark bookmark);
 
-    @Query("{\"bool\": {\"must\": [{\"match\": {\"bookmark.id\": \"?0\"}}]}}")
-    Page<Bookmark> findByBookmarkIdUsingCustomQuery(String name, Pageable pageable);
+    public List<Bookmark> fetchAllBookmarks();
+
+
 }

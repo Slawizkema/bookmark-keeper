@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.EntityType;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import ru.ssharaev.bookmarkkeeper.model.Bookmark;
 import ru.ssharaev.bookmarkkeeper.model.BookmarkType;
+import ru.ssharaev.bookmarkkeeper.repository.BookmarkRepository;
 
-import java.util.Set;
+import static ru.ssharaev.bookmarkkeeper.TelegramMessageUtils.fetchEntityValue;
+import static ru.ssharaev.bookmarkkeeper.TelegramMessageUtils.hasEntity;
 
 /**
  * Закладываемся на то, что в сервис передается сообщение без команд,
@@ -20,10 +22,12 @@ import java.util.Set;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class BookmarkSaveService {
     private final BookmarkTagProvider tagProvider;
+    private final BookmarkRepository bookmarkRepository;
 
     public Bookmark saveBookmark(Message message) {
         log.info("Сохраняем сообщение");
         Bookmark bookmark = createBookmark(message);
+        bookmarkRepository.saveBookmark(bookmark);
         log.info("Saved bookmark: {}", bookmark);
         return bookmark;
     }
@@ -35,25 +39,20 @@ public class BookmarkSaveService {
                 "Test",
                 getUrl(message),
                 message.getText(),
-                getTags(message)
+                tagProvider.fetchTag(message)
         );
     }
 
-    private Set<String> getTags(Message message) {
-        return tagProvider.fetchTag(message);
-    }
-
     private String getUrl(Message message) {
-        if (!message.hasEntities()) {
-            return null;
-        }
-        MessageEntity entity = message.getEntities().stream()
-                .filter(e -> e.getType().equals("url"))
-                .findFirst()
-                .orElseThrow(RuntimeException::new);
-        return message.getText().substring(entity.getOffset(), entity.getOffset() + entity.getLength());
+        return hasEntity(message, EntityType.URL) ? fetchEntityValue(message, EntityType.URL) : null;
     }
 
+    /**
+     * Определяет тип закладки. Пока поддерживаем 4 типа - текст, фото, ссылка, документ
+     *
+     * @param message сообщение клиента
+     * @return тип закладки
+     */
     private BookmarkType getBookmarkType(Message message) {
         if (!message.hasEntities()) {
             if (message.hasDocument()) {
@@ -64,13 +63,6 @@ public class BookmarkSaveService {
             }
             return BookmarkType.TEXT;
         }
-        return message.getEntities().stream()
-                .map(MessageEntity::getType)
-                .filter(e -> e.equals("url"))
-                .map(e -> {
-                    return BookmarkType.URL;
-                })
-                .findAny()
-                .orElseThrow(RuntimeException::new);
+        return hasEntity(message, EntityType.URL) ? BookmarkType.URL : BookmarkType.TEXT;
     }
 }

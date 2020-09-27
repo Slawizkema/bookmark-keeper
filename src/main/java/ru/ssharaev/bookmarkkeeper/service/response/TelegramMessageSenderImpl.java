@@ -15,7 +15,7 @@ import ru.ssharaev.bookmarkkeeper.telegram.Bot;
 @Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class TelegramResponseServiceImpl implements TelegramResponseService {
+public class TelegramMessageSenderImpl implements TelegramMessageSender {
     private final Bot bot;
 
     @Override

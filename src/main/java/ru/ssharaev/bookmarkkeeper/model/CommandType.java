@@ -4,5 +4,6 @@ public enum CommandType {
     SAVE,
     EDIT,
     DELETE,
-    FIND
+    FIND,
+    ALL
 }

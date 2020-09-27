@@ -2,11 +2,14 @@ package ru.ssharaev.bookmarkkeeper.service.bookmark;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.EntityType;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static ru.ssharaev.bookmarkkeeper.TelegramMessageUtils.fetchListEntityValue;
 
 @Slf4j
 @Service
@@ -24,10 +27,7 @@ public class TelegramMessageTagProvider implements BookmarkTagProvider {
             log.info("У сообщения нет тэгов!");
             return Collections.emptySet();
         }
-        Set<String> tags = message.getEntities().stream()
-                .filter(e -> e.getType().equals("hashtag"))
-                .map(e -> message.getText().substring(e.getOffset(), e.getOffset() + e.getLength()))
-                .collect(Collectors.toSet());
+        Set<String> tags = new HashSet<>(fetchListEntityValue(message, EntityType.HASHTAG));
         log.info("Тэги полученные из сообщения: {}", tags);
         return tags;
     }

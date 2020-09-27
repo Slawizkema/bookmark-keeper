@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
  * @author slawi
  * @since 26.09.2020
  */
-public interface TelegramMessageConstructor {
+public interface TelegramMessageSender {
 
-    public SendMessage createSendMessage(String messageText, long chatId);
+    public void sendMessage(SendMessage sendMessage);
 }

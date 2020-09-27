@@ -9,17 +9,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.ssharaev.bookmarkkeeper.service.TelegramUpdateHandler;
+import ru.ssharaev.bookmarkkeeper.service.response.TelegramResponseService;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class BotController {
     private final TelegramUpdateHandler updateHandler;
+    private final TelegramResponseService responseService;
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public void onUpdate(@RequestBody Update update) {
         log.info("Получили новое сообщение!\n{}", update);
         updateHandler.handleUpdate(update);
     }
-
 }
