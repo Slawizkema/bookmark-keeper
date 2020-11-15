@@ -1,0 +1,104 @@
+@startuml
+skinparam maxMessageSize 400
+skinparam defaultFontSize 20
+actor User
+boundary Telegram
+boundary BookmarkSearchService
+boundary MessageRenderer
+database DB
+
+== Поиск закладок ==
+User -> Telegram : Отправляет команду "find"
+activate Telegram
+Telegram -> BookmarkSearchService : Отправляет Update с командой "find"
+activate BookmarkSearchService
+BookmarkSearchService --> Telegram : Возвращает виды поиска
+  note right
+  Варианты поиска:
+  По типу
+  По категории
+  По тэгам
+  По ключевым словам
+  end note
+deactivate BookmarkSearchService
+Telegram --> User : Отображает кнопки с типами поиска
+deactivate Telegram
+
+
+alt Поиск по ключевым словам
+User -> Telegram : Ввводит поисковый запрос и нажимает нужную кнопку
+activate Telegram
+Telegram -> BookmarkSearchService : Отправляет Update с поисковой строкой и командой с типом поиска
+activate BookmarkSearchService
+BookmarkSearchService -> DB : Запрашивает закладки
+DB --> BookmarkSearchService : Отдает закладки
+BookmarkSearchService -> MessageRenderer : Запускает формирование сообщения
+activate MessageRenderer
+deactivate BookmarkSearchService
+  rnote over MessageRenderer
+  * Отрисовывает
+  отображение закладки
+  * Компонует закладки
+  в сообщение
+  * Контролирует пагинацию
+  end note
+MessageRenderer --> Telegram : Отправляет сообщение с найденными закладками
+deactivate MessageRenderer
+Telegram --> User : Пересылает сообщение с найденными закладками
+deactivate Telegram
+
+else Поиск по категориям/типам/тэгам
+User -> Telegram : Нажимает кнопку "По категориям/типам/тэгам"
+activate Telegram
+Telegram -> BookmarkSearchService : Отправляет Update с типом поиска "По категориям/типам/тэгам"
+activate BookmarkSearchService
+BookmarkSearchService -> DB : Запрашивает категории/типы/тэги
+DB --> BookmarkSearchService : Отдает категории/типы/тэги
+BookmarkSearchService -> MessageRenderer : Запускает формирование сообщения с кнопками категорий/типов/тэгов
+activate MessageRenderer
+deactivate BookmarkSearchService
+MessageRenderer --> Telegram : Отправляет сообщение с кнопками категорий/типов/тэгов
+deactivate MessageRenderer
+Telegram --> User : Пересылает сообщение с кнопками категорий/типов/тэгов
+deactivate Telegram
+
+User -> Telegram : Нажимает нужную кнопку
+activate Telegram
+Telegram -> BookmarkSearchService : Отправляет Update с выбранной категорией/типом/тэгом
+activate BookmarkSearchService
+BookmarkSearchService -> DB : Запрашивает закладки
+DB --> BookmarkSearchService : Отдает закладки
+BookmarkSearchService -> MessageRenderer : Запускает формирование сообщения
+activate MessageRenderer
+deactivate BookmarkSearchService
+MessageRenderer --> Telegram : Отправляет сообщение с найденными закладками
+deactivate MessageRenderer
+Telegram --> User : Пересылает сообщение с найденными закладками
+deactivate Telegram
+end
+
+group Опционально
+User -> Telegram : Нажимает кнопку следующей страницы
+activate Telegram
+Telegram -> MessageRenderer : Запрашивает следующую страницу
+activate MessageRenderer
+MessageRenderer --> Telegram : Отправляет сообщение
+deactivate MessageRenderer
+Telegram --> User : Пересылает сообщение с найденными закладками
+deactivate Telegram
+end
+User -> Telegram : Выбирает закладку
+activate Telegram
+Telegram -> BookmarkSearchService : Запрашивает нужную закладку
+activate BookmarkSearchService
+BookmarkSearchService -> DB : Обновляет статус закладки
+BookmarkSearchService -> MessageRenderer : Запускает формирование сообщения
+activate MessageRenderer
+MessageRenderer -> DB : Запрашивает закладку
+DB --> MessageRenderer : Отдает закладку
+deactivate BookmarkSearchService
+MessageRenderer --> Telegram : Отправляет сообщение
+deactivate MessageRenderer
+Telegram --> User : Пересылает сообщение с закладкой
+deactivate Telegram
+@enduml

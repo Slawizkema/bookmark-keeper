@@ -1,0 +1,49 @@
+@startuml
+skinparam maxMessageSize 150
+actor User
+boundary Telegram
+boundary BookmarkService
+boundary BookmarkTagProvider
+boundary MessageRenderer
+database DB
+
+== Сохранение закладки ==
+User -> Telegram : Отправляет сообщение с закладкой
+activate Telegram
+Telegram -> BookmarkService : Отправляет Update с закладкой
+activate BookmarkService
+alt успешный кейс
+    BookmarkService -> BookmarkService : Определяем тип закладки
+    BookmarkService -> BookmarkTagProvider : Запрашивает тэги
+    activate BookmarkTagProvider
+    BookmarkTagProvider -> BookmarkTagProvider : Вытаскивает тэги из сообщения
+    BookmarkTagProvider -> BookmarkTagProvider : Добавляет в тэги сайт (если закладка - ссылка)
+    BookmarkTagProvider --> BookmarkService : Возвращает список тэгов
+    deactivate BookmarkTagProvider
+    BookmarkService --> MessageRenderer : Отправляем список доступных категорий
+    deactivate BookmarkService
+    activate MessageRenderer
+    MessageRenderer -> MessageRenderer : Рисуем кнопки категорий
+    MessageRenderer --> Telegram : Отправляем доступные категории
+    deactivate MessageRenderer
+    Telegram --> User : Пересылает категории пользователю
+    deactivate Telegram
+    User -> Telegram : Выбирает категорию
+    activate Telegram
+    Telegram -> BookmarkService : Отправляет Update с категорией
+    activate BookmarkService
+    BookmarkService -> DB : Сохраняем закладку
+    BookmarkService -> MessageRenderer : Запускаем формирование сообщения
+    deactivate BookmarkService
+    MessageRenderer --> Telegram : Отвечаем ОК, отправляем закладку
+else #FFBBBB ошибка
+    BookmarkService -> DB : сохраняем инфу об ошибке
+    rnote over BookmarkService
+    Сохраняем сырой Update
+    end note
+    BookmarkService --> Telegram : отвечаем не ОК
+    deactivate BookmarkService
+end
+Telegram -> User : Пересылает ответ пользователю
+deactivate Telegram
+@enduml

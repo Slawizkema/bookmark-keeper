@@ -1,6 +1,9 @@
 package ru.ssharaev.bookmarkkeeper.service.response;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import ru.ssharaev.bookmarkkeeper.model.BookmarkCategory;
+
+import java.util.List;
 
 /**
  * @author slawi
@@ -8,5 +11,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
  */
 public interface TelegramMessageRender {
 
-    public SendMessage createSendMessage(String messageText, long chatId);
+    SendMessage createBookmarkSendMessage(String messageText, long chatId);
+
+    SendMessage createSaveBookmarkSendMessage(String messageText, String messageId, long chatId, List<BookmarkCategory> categoryList);
 }

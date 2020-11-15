@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 public final class TelegramResponseTemplate {
     public static final String BOOKMARK_SAVED = "Заметка сохранена!";
     public static final String BOOKMARK_TEMPLATE = "\nТип: %s\nКатегория: %s\nТэги: %s\nТело: \n%s";
+    public static final String SELECT_CATEGORY = "\nВыберите категорию:\n";
     public static final String EMPTY_BOOKMARK_LIST = "Заметок еще нет!";
 }

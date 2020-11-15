@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.ssharaev.bookmarkkeeper.model.Bookmark;
+import ru.ssharaev.bookmarkkeeper.model.BookmarkCategory;
 
 import java.util.List;
 
@@ -22,17 +23,27 @@ public class TelegramResponseService {
     private final TelegramMessageSender telegramMessageSender;
 
     public void sendTextMessage(String text, long chatId) {
-        telegramMessageSender.sendMessage(messageConstructor.createSendMessage(text, chatId));
+        telegramMessageSender.sendMessage(messageConstructor.createBookmarkSendMessage(text, chatId));
     }
 
-    public void sendSaveResponse(Bookmark bookmark, long chatId) {
+    public void sendSaveResponse(Bookmark bookmark, long chatId, List<BookmarkCategory> categoryList) {
+        String messageText = String.format(
+                BOOKMARK_TEMPLATE + SELECT_CATEGORY,
+                bookmark.getType(),
+                bookmark.getCategory(),
+                bookmark.getTags(),
+                bookmark.getBody());
+        telegramMessageSender.sendMessage(messageConstructor.createSaveBookmarkSendMessage(messageText, bookmark.getMessageId(), chatId, categoryList));
+    }
+
+    public void sendBookmarkResponse(Bookmark bookmark, long chatId) {
         String messageText = String.format(
                 BOOKMARK_SAVED + BOOKMARK_TEMPLATE,
                 bookmark.getType(),
                 bookmark.getCategory(),
                 bookmark.getTags(),
                 bookmark.getBody());
-        sendTextMessage(messageText, chatId);
+        telegramMessageSender.sendMessage(messageConstructor.createBookmarkSendMessage(messageText, chatId));
     }
 
     //TODO добавить пагинацию

@@ -7,8 +7,12 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.EntityType;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.ssharaev.bookmarkkeeper.model.Bookmark;
+import ru.ssharaev.bookmarkkeeper.model.BookmarkCategory;
 import ru.ssharaev.bookmarkkeeper.model.BookmarkType;
+import ru.ssharaev.bookmarkkeeper.model.CallBackData;
 import ru.ssharaev.bookmarkkeeper.repository.BookmarkRepository;
+import ru.ssharaev.bookmarkkeeper.repository.CategoryRepository;
+import ru.ssharaev.bookmarkkeeper.service.response.TelegramResponseService;
 
 import static ru.ssharaev.bookmarkkeeper.TelegramMessageUtils.fetchEntityValue;
 import static ru.ssharaev.bookmarkkeeper.TelegramMessageUtils.hasEntity;
@@ -23,20 +27,27 @@ import static ru.ssharaev.bookmarkkeeper.TelegramMessageUtils.hasEntity;
 public class BookmarkSaveService {
     private final BookmarkTagProvider tagProvider;
     private final BookmarkRepository bookmarkRepository;
+    private final CategoryRepository categoryRepository;
+    private final TelegramResponseService responseService;
 
-    public Bookmark saveBookmark(Message message) {
+    public void saveBookmark(Message message) {
         log.info("Сохраняем сообщение");
         Bookmark bookmark = createBookmark(message);
         bookmarkRepository.saveBookmark(bookmark);
         log.info("Saved bookmark: {}", bookmark);
-        return bookmark;
+        responseService.sendSaveResponse(bookmark, message.getChatId(), categoryRepository.fetchAllCategory());
+    }
+
+    public void updateBookmarkCategory(Message message, CallBackData callBackData) {
+        Bookmark bookmark = bookmarkRepository.updateBookmarkCategory(callBackData.getMessageId(), new BookmarkCategory(callBackData.getCategory()));
+        responseService.sendBookmarkResponse(bookmark, message.getChatId());
     }
 
     public Bookmark createBookmark(Message message) {
         return new Bookmark(
                 message.getMessageId().toString(),
                 getBookmarkType(message),
-                "Test",
+                null,
                 getUrl(message),
                 message.getText(),
                 tagProvider.fetchTag(message)

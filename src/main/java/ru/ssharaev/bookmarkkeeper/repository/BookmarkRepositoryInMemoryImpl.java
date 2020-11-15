@@ -3,6 +3,7 @@ package ru.ssharaev.bookmarkkeeper.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.ssharaev.bookmarkkeeper.model.Bookmark;
+import ru.ssharaev.bookmarkkeeper.model.BookmarkCategory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,5 +29,22 @@ public class BookmarkRepositoryInMemoryImpl implements BookmarkRepository {
         List<Bookmark> bookmarks = new ArrayList<>(bookmarkList);
         log.info("Fetch {} bookmarks", bookmarks.size());
         return bookmarks;
+    }
+
+    @Override
+    public Bookmark fetchBookmarkBy(String messageId) {
+        return bookmarkList.stream()
+                .filter(it -> it.getMessageId().equals(messageId))
+                .findFirst()
+                .orElseThrow(RuntimeException::new);
+    }
+
+    @Override
+    public Bookmark updateBookmarkCategory(String messageId, BookmarkCategory category) {
+        return bookmarkList.stream()
+                .filter(it -> it.getMessageId().equals(messageId))
+                .findFirst()
+                .orElseThrow(RuntimeException::new)
+                .setCategory(category);
     }
 }

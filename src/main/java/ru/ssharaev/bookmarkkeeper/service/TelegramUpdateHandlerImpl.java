@@ -8,7 +8,6 @@ import org.telegram.telegrambots.meta.api.objects.EntityType;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.ssharaev.bookmarkkeeper.exception.UnknownCommandException;
-import ru.ssharaev.bookmarkkeeper.model.Bookmark;
 import ru.ssharaev.bookmarkkeeper.service.bookmark.BookmarkSaveService;
 import ru.ssharaev.bookmarkkeeper.service.command.CommandService;
 import ru.ssharaev.bookmarkkeeper.service.response.TelegramResponseService;
@@ -26,9 +25,14 @@ public class TelegramUpdateHandlerImpl implements TelegramUpdateHandler {
     private final CommandService commandService;
     private final BookmarkSaveService bookmarkSaveService;
     private final TelegramResponseService responseService;
+    private final CallBackHandler callBackHandler;
 
     @Override
     public void handleUpdate(Update update) {
+        if (update.hasCallbackQuery()) {
+            callBackHandler.handleCallBack(update.getCallbackQuery());
+            return;
+        }
         if (hasEntity(update.getMessage(), EntityType.BOTCOMMAND)) {
             try {
                 commandService.handleCommand(update);
@@ -42,8 +46,7 @@ public class TelegramUpdateHandlerImpl implements TelegramUpdateHandler {
     }
 
     private void handleSaveBookmark(Message message) {
-        Bookmark bookmark = bookmarkSaveService.saveBookmark(message);
-        responseService.sendSaveResponse(bookmark, message.getChatId());
+        bookmarkSaveService.saveBookmark(message);
     }
 
     //TODO заменить на ExceptionHandler
