@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.EntityType;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.ssharaev.bookmarkkeeper.callback.CallBackHandler;
 import ru.ssharaev.bookmarkkeeper.exception.UnknownCommandException;
 import ru.ssharaev.bookmarkkeeper.service.bookmark.BookmarkSaveService;
 import ru.ssharaev.bookmarkkeeper.service.command.CommandService;
@@ -51,6 +52,6 @@ public class TelegramUpdateHandlerImpl implements TelegramUpdateHandler {
 
     //TODO заменить на ExceptionHandler
     private void sendErrorMessage(Update update) {
-        responseService.sendTextMessage("Команда не найдена, повторите опытку!", update.getMessage().getChatId());
+        responseService.sendTextMessage("Команда не найдена, повторите попытку!", update.getMessage().getChatId());
     }
 }

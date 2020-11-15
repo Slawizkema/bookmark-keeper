@@ -33,25 +33,28 @@ public class BookmarkSaveService {
     public void saveBookmark(Message message) {
         log.info("Сохраняем сообщение");
         Bookmark bookmark = createBookmark(message);
-        bookmarkRepository.saveBookmark(bookmark);
+        bookmark = bookmarkRepository.save(bookmark);
+        bookmarkRepository.flush();
         log.info("Saved bookmark: {}", bookmark);
-        responseService.sendSaveResponse(bookmark, message.getChatId(), categoryRepository.fetchAllCategory());
+        responseService.sendSaveResponse(bookmark, message.getChatId(), categoryRepository.findAll());
     }
 
     public void updateBookmarkCategory(Message message, CallBackData callBackData) {
-        Bookmark bookmark = bookmarkRepository.updateBookmarkCategory(callBackData.getMessageId(), new BookmarkCategory(callBackData.getCategory()));
+        BookmarkCategory bookmarkCategory = categoryRepository.findFirstByName(callBackData.getCategory());
+        Bookmark bookmark = bookmarkRepository.findBookmarkByMessageId(callBackData.getMessageId());
+        bookmarkRepository.updateBookmarkCategory(bookmarkCategory.getId(), bookmark.getId());
         responseService.sendBookmarkResponse(bookmark, message.getChatId());
     }
 
     public Bookmark createBookmark(Message message) {
-        return new Bookmark(
-                message.getMessageId().toString(),
-                getBookmarkType(message),
-                null,
-                getUrl(message),
-                message.getText(),
-                tagProvider.fetchTag(message)
-        );
+        return Bookmark.builder()
+                .messageId(message.getMessageId().toString())
+                .type(getBookmarkType(message))
+                .category(null)
+                .url(getUrl(message))
+                .body(message.getText())
+                .tags(tagProvider.fetchTag(message))
+                .build();
     }
 
     private String getUrl(Message message) {

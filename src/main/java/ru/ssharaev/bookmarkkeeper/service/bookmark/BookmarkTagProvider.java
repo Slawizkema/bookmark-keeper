@@ -1,6 +1,7 @@
 package ru.ssharaev.bookmarkkeeper.service.bookmark;
 
 import org.telegram.telegrambots.meta.api.objects.Message;
+import ru.ssharaev.bookmarkkeeper.model.Tag;
 
 import java.util.Set;
 
@@ -12,5 +13,5 @@ import java.util.Set;
  */
 public interface BookmarkTagProvider {
 
-    public Set<String> fetchTag(Message message);
+    Set<Tag> fetchTag(Message message);
 }

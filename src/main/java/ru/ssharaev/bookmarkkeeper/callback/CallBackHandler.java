@@ -1,4 +1,4 @@
-package ru.ssharaev.bookmarkkeeper.service;
+package ru.ssharaev.bookmarkkeeper.callback;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

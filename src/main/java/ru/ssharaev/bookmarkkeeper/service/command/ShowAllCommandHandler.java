@@ -25,7 +25,7 @@ public class ShowAllCommandHandler implements CommandHandler {
     @Override
     public void handleCommand(Update update) {
         log.info("Send all bookmarks to client");
-        List<Bookmark> bookmarkList = repository.fetchAllBookmarks();
+        List<Bookmark> bookmarkList = repository.findAll();
         responseService.sendBookmarkList(bookmarkList, update.getMessage().getChatId());
     }
 }

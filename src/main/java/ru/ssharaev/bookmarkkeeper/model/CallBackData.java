@@ -11,5 +11,6 @@ import lombok.Data;
 @JsonAutoDetect
 public class CallBackData {
     private final String messageId;
+    private final CommandType commandType;
     private final String category;
 }

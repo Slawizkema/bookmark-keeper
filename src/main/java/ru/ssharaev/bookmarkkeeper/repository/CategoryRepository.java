@@ -1,22 +1,17 @@
 package ru.ssharaev.bookmarkkeeper.repository;
 
-import org.springframework.stereotype.Service;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.ssharaev.bookmarkkeeper.model.BookmarkCategory;
-
-import java.util.List;
 
 /**
  * @author slawi
  * @since 15.11.2020
  */
-@Service
-public class CategoryRepository {
+@Repository
+@Transactional
+public interface CategoryRepository extends JpaRepository<BookmarkCategory, Long> {
 
-    public List<BookmarkCategory> fetchAllCategory() {
-        return List.of(
-                new BookmarkCategory("Test"),
-                new BookmarkCategory("Prog"),
-                new BookmarkCategory("Life")
-        );
-    }
+    BookmarkCategory findFirstByName(String name);
 }
