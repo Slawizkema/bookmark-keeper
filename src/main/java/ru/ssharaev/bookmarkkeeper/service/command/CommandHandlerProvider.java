@@ -10,9 +10,9 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CommandHandlerProvider {
-    private final Map<CommandType, CommandHandler> handlerMap;
+    private final Map<CommandType, CommandHandler> commandHandlerMap;
 
     public CommandHandler getCommandHandler(CommandType commandType) {
-        return handlerMap.get(commandType);
+        return commandHandlerMap.get(commandType);
     }
 }

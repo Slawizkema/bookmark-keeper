@@ -9,7 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.ssharaev.bookmarkkeeper.model.Bookmark;
 import ru.ssharaev.bookmarkkeeper.model.BookmarkCategory;
 import ru.ssharaev.bookmarkkeeper.model.BookmarkType;
-import ru.ssharaev.bookmarkkeeper.model.CallBackData;
+import ru.ssharaev.bookmarkkeeper.model.CallbackData;
 import ru.ssharaev.bookmarkkeeper.repository.BookmarkRepository;
 import ru.ssharaev.bookmarkkeeper.repository.CategoryRepository;
 import ru.ssharaev.bookmarkkeeper.service.response.TelegramResponseService;
@@ -39,7 +39,7 @@ public class BookmarkSaveService {
         responseService.sendSaveResponse(bookmark, message.getChatId(), categoryRepository.findAll());
     }
 
-    public void updateBookmarkCategory(Message message, CallBackData callBackData) {
+    public void updateBookmarkCategory(Message message, CallbackData callBackData) {
         BookmarkCategory bookmarkCategory = categoryRepository.findFirstByName(callBackData.getCategory());
         Bookmark bookmark = bookmarkRepository.findBookmarkByMessageId(callBackData.getMessageId());
         bookmarkRepository.updateBookmarkCategory(bookmarkCategory.getId(), bookmark.getId());
