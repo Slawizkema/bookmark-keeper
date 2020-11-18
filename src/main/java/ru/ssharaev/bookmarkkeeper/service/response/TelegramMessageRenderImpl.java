@@ -10,16 +10,12 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageRe
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import ru.ssharaev.bookmarkkeeper.model.Bookmark;
-import ru.ssharaev.bookmarkkeeper.model.BookmarkCategory;
-import ru.ssharaev.bookmarkkeeper.model.CallbackData;
-import ru.ssharaev.bookmarkkeeper.model.CallbackType;
+import ru.ssharaev.bookmarkkeeper.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.ssharaev.bookmarkkeeper.service.response.TelegramResponseTemplate.BOOKMARK_TEMPLATE;
-import static ru.ssharaev.bookmarkkeeper.service.response.TelegramResponseTemplate.SELECT_CATEGORY;
+import static ru.ssharaev.bookmarkkeeper.service.response.TelegramResponseTemplate.*;
 
 /**
  * @author slawi
@@ -55,6 +51,13 @@ public class TelegramMessageRenderImpl implements TelegramMessageRender {
     }
 
     @Override
+    public SendMessage createFindByCategoryMessage(List<BookmarkCategory> categoryList, long chatId) {
+        SendMessage replyMessageToUser = new SendMessage(chatId, SELECT_CATEGORY);
+        replyMessageToUser.setReplyMarkup(createInlineKeyboard(CallbackType.CATEGORY, categoryList, null));
+        return replyMessageToUser;
+    }
+
+    @Override
     public SendMessage createSaveBookmarkSendMessage(String messageText, String messageId, long chatId, List<BookmarkCategory> categoryList) {
         log.info("Create SendMessage for chatId={}, text ='{}'", chatId, messageText);
         SendMessage replyMessageToUser = new SendMessage();
@@ -73,13 +76,31 @@ public class TelegramMessageRenderImpl implements TelegramMessageRender {
         return messageReplyMarkup;
     }
 
+    @Override
+    public SendMessage createFindByTagMessage(List<Tag> bookmarkTagList, long chatId) {
+        SendMessage replyMessageToUser = new SendMessage(chatId, SELECT_TAG);
+        replyMessageToUser.setReplyMarkup(createTagInlineKeyboard(CallbackType.BY_TAG, bookmarkTagList, null));
+        return replyMessageToUser;
+    }
+
     private InlineKeyboardMarkup createInlineKeyboard(CallbackType callbackType, List<BookmarkCategory> categoryList, String messageId) {
         List<InlineKeyboardButton> row = new ArrayList<>();
         for (BookmarkCategory it : categoryList) {
             InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton().setText(it.getName()).setCallbackData(
-                    CallbackData.toJson(new CallbackData(messageId, callbackType, it.getName()), objectMapper));
+                    CallbackData.toJson(new CallbackData(messageId, callbackType, it.getId(), 0), objectMapper));
             row.add(inlineKeyboardButton);
         }
         return new InlineKeyboardMarkup(List.of(row));
     }
+
+    private InlineKeyboardMarkup createTagInlineKeyboard(CallbackType callbackType, List<Tag> tagListList, String messageId) {
+        List<InlineKeyboardButton> row = new ArrayList<>();
+        for (Tag it : tagListList) {
+            InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton().setText(it.getName()).setCallbackData(
+                    CallbackData.toJson(new CallbackData(messageId, callbackType, 0, it.getId()), objectMapper));
+            row.add(inlineKeyboardButton);
+        }
+        return new InlineKeyboardMarkup(List.of(row));
+    }
+
 }

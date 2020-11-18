@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * TODO убрать лишние поля для соблюдения ограничения в 64 байта
+ *
  * @author slawi
  * @since 15.11.2020
  */
@@ -15,8 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 @JsonAutoDetect
 public class CallbackData {
     private final String messageId;
-    private final CallbackType callbackType;
-    private final String category;
+    private final CallbackType type;
+    private final long category;
+    private final long tag;
 
 
     public static String toJson(CallbackData callbackData, ObjectMapper objectMapper) {

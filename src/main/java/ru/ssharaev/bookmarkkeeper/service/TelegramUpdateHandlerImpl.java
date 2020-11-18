@@ -62,7 +62,7 @@ public class TelegramUpdateHandlerImpl implements TelegramUpdateHandler {
             log.error("Некорректные данные в CallbackQuery {}", callbackQuery);
             throw new UnknownCommandException("Невозможно обработать CallbackQuery " + callbackQuery.toString());
         }
-        callbackHandlerProvider.getCallbackHandler(callbackData.getCallbackType()).handle(callbackQuery, callbackData);
+        callbackHandlerProvider.getCallbackHandler(callbackData.getType()).handle(callbackQuery, callbackData);
     }
 
     private void handleSaveBookmark(Message message) {

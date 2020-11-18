@@ -1,7 +1,6 @@
 package ru.ssharaev.bookmarkkeeper.service.callback;
 
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import ru.ssharaev.bookmarkkeeper.exception.UnknownCommandException;
 import ru.ssharaev.bookmarkkeeper.model.CallbackData;
 import ru.ssharaev.bookmarkkeeper.model.CallbackType;
 
@@ -12,5 +11,5 @@ import ru.ssharaev.bookmarkkeeper.model.CallbackType;
 public interface CallbackHandler {
     CallbackType getCallbackType();
 
-    void handle(CallbackQuery callbackQuery, CallbackData callbackData) throws UnknownCommandException;
+    void handle(CallbackQuery callbackQuery, CallbackData callbackData);
 }

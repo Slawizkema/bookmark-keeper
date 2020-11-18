@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageRe
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import ru.ssharaev.bookmarkkeeper.model.Bookmark;
 import ru.ssharaev.bookmarkkeeper.model.BookmarkCategory;
+import ru.ssharaev.bookmarkkeeper.model.Tag;
 
 import java.util.List;
 
@@ -18,7 +19,11 @@ public interface TelegramMessageRender {
 
     SendMessage createBookmarkSendMessage(Bookmark bookmark, long chatId);
 
+    SendMessage createFindByCategoryMessage(List<BookmarkCategory> categoryList, long chatId);
+
     SendMessage createSaveBookmarkSendMessage(String messageText, String messageId, long chatId, List<BookmarkCategory> categoryList);
 
     EditMessageReplyMarkup createDeleteKeyboardMessage(CallbackQuery callbackQuery);
+
+    SendMessage createFindByTagMessage(List<Tag> bookmarkTagList, long chatId);
 }

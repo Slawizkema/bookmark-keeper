@@ -39,8 +39,10 @@ public class BookmarkSaveService {
         responseService.sendSaveResponse(bookmark, message.getChatId(), categoryRepository.findAll());
     }
 
-    public void updateBookmarkCategory(Message message, CallbackData callBackData) {
-        BookmarkCategory bookmarkCategory = categoryRepository.findFirstByName(callBackData.getCategory());
+    public void updateBookmarkCategory(Message message, CallbackData callBackData) throws UnsupportedOperationException {
+        BookmarkCategory bookmarkCategory = categoryRepository
+                .findById(callBackData.getCategory())
+                .orElseThrow(() -> new UnsupportedOperationException("Нет указанной категории!"));
         Bookmark bookmark = bookmarkRepository.findBookmarkByMessageId(callBackData.getMessageId());
         bookmarkRepository.updateBookmarkCategory(bookmarkCategory.getId(), bookmark.getId());
         responseService.sendBookmarkResponse(bookmark, message.getChatId());
