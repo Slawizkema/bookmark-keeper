@@ -32,11 +32,12 @@ public class SaveCallbackHandler implements CallbackHandler {
     @Override
     public void handle(CallbackQuery callbackQuery, CallbackData callbackData) {
         try {
-            bookmarkSaveService.updateBookmarkCategory(callbackQuery.getMessage(), callbackData);
+            String bookmarkName = bookmarkSaveService.updateBookmarkCategory(callbackQuery.getMessage(), callbackData);
+            responseService.sendUpdateBookmarkAnswer(callbackQuery, bookmarkName);
+            //responseService.sendDeleteKeyboard(callbackQuery);
         } catch (UnsupportedOperationException e) {
             sendErrorMessage(callbackQuery, e);
         }
-        responseService.sendDeleteKeyboard(callbackQuery);
     }
 
     //TODO заменить на ExceptionHandler

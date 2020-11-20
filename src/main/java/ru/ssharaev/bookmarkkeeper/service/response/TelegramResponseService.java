@@ -29,41 +29,12 @@ public class TelegramResponseService {
     }
 
     public void sendSaveResponse(Bookmark bookmark, long chatId, List<BookmarkCategory> categoryList) {
-        String messageText = String.format(
-                BOOKMARK_TEMPLATE + SELECT_CATEGORY,
-                bookmark.getType(),
-                bookmark.getCategory(),
-                bookmark.getTags(),
-                bookmark.getBody());
-        messageSender.sendMessage(messageRender.createSaveBookmarkSendMessage(messageText, bookmark.getMessageId(), chatId, categoryList));
-    }
-
-    public void sendBookmarkResponse(Bookmark bookmark, long chatId) {
-        String messageText = String.format(
-                BOOKMARK_SAVED + BOOKMARK_TEMPLATE,
-                bookmark.getType(),
-                bookmark.getCategory(),
-                bookmark.getTags(),
-                bookmark.getBody());
-        messageSender.sendMessage(messageRender.createBookmarkSendMessage(messageText, chatId));
+        messageSender.sendMessage(messageRender.createSaveBookmarkSendMessage(SELECT_CATEGORY, bookmark.getMessageId(), chatId, categoryList));
     }
 
     //TODO добавить пагинацию
     public void sendBookmarkList(List<Bookmark> bookmarkList, long chatId) {
-        if (bookmarkList.isEmpty()) {
-            sendTextMessage(EMPTY_BOOKMARK_LIST, chatId);
-        }
-        StringBuilder builder = new StringBuilder();
-        bookmarkList.forEach(bookmark -> {
-            builder.append(String.format(
-                    BOOKMARK_TEMPLATE,
-                    bookmark.getType(),
-                    bookmark.getCategory(),
-                    bookmark.getTags(),
-                    bookmark.getBody()))
-                    .append("\n\n");
-        });
-        sendTextMessage(builder.toString(), chatId);
+        messageSender.sendMessage(messageRender.createSimpleBookmarkList(bookmarkList, chatId));
     }
 
     public void sendFindByCategoryResponse(List<BookmarkCategory> bookmarkCategories, long chatId) {
@@ -76,5 +47,12 @@ public class TelegramResponseService {
 
     public void sendDeleteKeyboard(CallbackQuery callbackQuery) {
         messageSender.sendEditMessageReplyMarkup(messageRender.createDeleteKeyboardMessage(callbackQuery));
+    }
+
+    public void sendUpdateBookmarkAnswer(CallbackQuery callbackQuery, String bookmarkName) {
+        String messageText = String.format(
+                BOOKMARK_SAVED + BOOKMARK_CATEGORY,
+                bookmarkName);
+        messageSender.sendMessage(messageRender.createEditMessageTextMessage(callbackQuery, messageText));
     }
 }

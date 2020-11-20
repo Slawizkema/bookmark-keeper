@@ -2,6 +2,7 @@ package ru.ssharaev.bookmarkkeeper.service.response;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import ru.ssharaev.bookmarkkeeper.model.Bookmark;
 import ru.ssharaev.bookmarkkeeper.model.BookmarkCategory;
@@ -25,5 +26,10 @@ public interface TelegramMessageRender {
 
     EditMessageReplyMarkup createDeleteKeyboardMessage(CallbackQuery callbackQuery);
 
+    EditMessageText createEditMessageTextMessage(CallbackQuery callbackQuery, String messageText);
+
     SendMessage createFindByTagMessage(List<Tag> bookmarkTagList, long chatId);
+
+    SendMessage createSimpleBookmarkList(List<Bookmark> bookmarkList, long chatId);
+
 }

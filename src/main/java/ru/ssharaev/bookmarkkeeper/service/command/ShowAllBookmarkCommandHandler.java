@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ShowAllCommandHandler implements CommandHandler {
+public class ShowAllBookmarkCommandHandler implements CommandHandler {
     private final BookmarkRepository repository;
     private final TelegramResponseService responseService;
 
@@ -31,7 +31,7 @@ public class ShowAllCommandHandler implements CommandHandler {
     @Override
     public void handleCommand(Update update) {
         log.info("Send all bookmarks to client");
-        List<Bookmark> bookmarkList = repository.findAll();
+        List<Bookmark> bookmarkList = repository.findBookmarksByUserId(update.getMessage().getChatId());
         responseService.sendBookmarkList(bookmarkList, update.getMessage().getChatId());
     }
 }

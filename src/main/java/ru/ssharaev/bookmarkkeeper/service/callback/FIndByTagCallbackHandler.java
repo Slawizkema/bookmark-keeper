@@ -31,8 +31,9 @@ public class FIndByTagCallbackHandler implements CallbackHandler {
 
     @Override
     public void handle(CallbackQuery callbackQuery, CallbackData callbackData) {
-        List<Bookmark> bookmarkList = bookmarkRepository.findBookmarkByTagId(callbackData.getTag());
-        responseService.sendBookmarkList(bookmarkList, callbackQuery.getMessage().getChatId());
+        Long chatId = callbackQuery.getMessage().getChatId();
+        List<Bookmark> bookmarkList = bookmarkRepository.findBookmarkByTagId(callbackData.getId(), chatId);
+        responseService.sendBookmarkList(bookmarkList, chatId);
         responseService.sendDeleteKeyboard(callbackQuery);
     }
 }

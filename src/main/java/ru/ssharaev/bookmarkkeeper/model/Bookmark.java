@@ -23,10 +23,13 @@ public class Bookmark {
     private Long id;
     private String messageId;
     private BookmarkType type;
+    private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id")
     private BookmarkCategory category;
+    private String title;
+    private String description;
     private String url;
     private String body;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

@@ -11,10 +11,14 @@ CREATE TABLE if not exists bookmark
     id          SERIAL PRIMARY KEY NOT NULL,
     message_id  text               NOT NULL,
     type        TEXT,
+    user_id     int,
     category_id int,
     CONSTRAINT bookmark_category_id_fk FOREIGN KEY (category_id) REFERENCES category (id),
+    title       text,
+    description text,
     url         TEXT,
-    body        TEXT
+    body        TEXT,
+    raw_text    text generated always as (title || ' ' || description || ' ' || body) stored
 );
 CREATE SEQUENCE if not exists bookmark_id_seq START WITH 3 INCREMENT BY 1;
 CREATE UNIQUE INDEX if not exists bookmark_id_uindex ON bookmark (id);
@@ -37,4 +41,4 @@ create table if not exists tag_bookmark
 insert into category (name)
 values ('prog');
 insert into category (name)
-values ('life');
+values ('new');

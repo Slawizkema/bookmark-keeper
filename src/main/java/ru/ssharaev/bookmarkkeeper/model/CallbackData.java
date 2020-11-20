@@ -7,7 +7,9 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * TODO убрать лишние поля для соблюдения ограничения в 64 байта
+ * Модель для передачи типа колбэка и идентификатора сущности.
+ * Ввиду ограничения максимального размера в 64 байта, есть только одно поле с идентификатором,
+ * которое в зависимости от типа колбэка может быть идентификатором сообщения, категории или тэга
  *
  * @author slawi
  * @since 15.11.2020
@@ -16,11 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @JsonAutoDetect
 public class CallbackData {
-    private final String messageId;
     private final CallbackType type;
-    private final long category;
-    private final long tag;
-
+    private final long id;
 
     public static String toJson(CallbackData callbackData, ObjectMapper objectMapper) {
         try {

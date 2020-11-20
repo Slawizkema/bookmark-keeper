@@ -18,14 +18,17 @@ import java.util.List;
 @Transactional
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
-    Bookmark findBookmarkByMessageId(String messageId);
+    List<Bookmark> findBookmarksByUserId(Long userId);
 
-    List<Bookmark> findBookmarkByCategoryId(Long categoryId);
+    Bookmark findBookmarkByMessageIdAndUserId(String messageId, Long userId);
 
-    @Query(value = "select * from bookmark where id in (select bookmark_id from tag_bookmark where tag_id = :tagId)", nativeQuery = true)
-    List<Bookmark> findBookmarkByTagId(Long tagId);
+    List<Bookmark> findBookmarkByCategoryIdAndUserId(Long categoryId, Long userId);
+
+    @Query(value = "select * from bookmark where id in " +
+            "(select bookmark_id from tag_bookmark where tag_id = :tagId) and user_id = :userId", nativeQuery = true)
+    List<Bookmark> findBookmarkByTagId(@Param("tagId") Long tagId, @Param("userId") Long userId);
 
     @Modifying(clearAutomatically = true)
-    @Query(value = "update bookmark set category_id = :categoryId where id = :bookmarkId", nativeQuery = true)
-    void updateBookmarkCategory(@Param("categoryId") Long categoryId, @Param("bookmarkId") Long bookmarkId);
+    @Query(value = "update bookmark set category_id = :categoryId where id = :bookmarkId and user_id = :userId", nativeQuery = true)
+    void updateBookmarkCategory(@Param("categoryId") Long categoryId, @Param("bookmarkId") Long bookmarkId, @Param("userId") Long userId);
 }

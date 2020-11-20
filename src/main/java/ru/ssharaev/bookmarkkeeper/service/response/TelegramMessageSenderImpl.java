@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.ssharaev.bookmarkkeeper.telegram.Bot;
 
@@ -30,6 +31,18 @@ public class TelegramMessageSenderImpl implements TelegramMessageSender {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void sendMessage(EditMessageText message) {
+        log.info("Try to send message {}", message);
+        try {
+            bot.execute(message);
+            log.info("Message sent!");
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void sendAnswerCallBackQuery(AnswerCallbackQuery answer) {

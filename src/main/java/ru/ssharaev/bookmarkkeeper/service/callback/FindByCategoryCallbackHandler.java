@@ -31,8 +31,9 @@ public class FindByCategoryCallbackHandler implements CallbackHandler {
 
     @Override
     public void handle(CallbackQuery callbackQuery, CallbackData callbackData) {
-        List<Bookmark> bookmarkList = bookmarkRepository.findBookmarkByCategoryId(callbackData.getCategory());
-        responseService.sendBookmarkList(bookmarkList, callbackQuery.getMessage().getChatId());
+        Long chatId = callbackQuery.getMessage().getChatId();
+        List<Bookmark> bookmarkList = bookmarkRepository.findBookmarkByCategoryIdAndUserId(callbackData.getId(), chatId);
+        responseService.sendBookmarkList(bookmarkList, chatId);
         responseService.sendDeleteKeyboard(callbackQuery);
     }
 }
