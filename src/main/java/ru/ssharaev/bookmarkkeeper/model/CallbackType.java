@@ -7,5 +7,9 @@ package ru.ssharaev.bookmarkkeeper.model;
 public enum CallbackType {
     SAVE,
     CATEGORY,
-    BY_TAG
+    BY_TAG,
+    BY_WORD,
+    SHOW,
+    PAGE,
+    ALL
 }

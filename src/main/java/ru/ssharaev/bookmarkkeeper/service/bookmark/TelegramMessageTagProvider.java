@@ -36,7 +36,7 @@ public class TelegramMessageTagProvider implements BookmarkTagProvider {
         }
         Set<Tag> tags = new HashSet<>(fetchListEntityValue(message, EntityType.HASHTAG))
                 .stream()
-                .map(tagRepository::findOrCreate)
+                .map(name -> tagRepository.findOrCreate(name, message.getChatId()))
                 .collect(Collectors.toSet());
         log.info("Тэги, полученные из сообщения: {}", tags);
         return tags;

@@ -24,7 +24,7 @@ dependencies {
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.4.0'
 	compile group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
     compile group: 'net.sourceforge.htmlcleaner', name: 'htmlcleaner', version: '2.2'
-
+	compile 'com.vdurmont:emoji-java:5.1.1'
 
     compileOnly 'org.projectlombok:lombok'
 	compile 'org.telegram:telegrambots:4.9.1'

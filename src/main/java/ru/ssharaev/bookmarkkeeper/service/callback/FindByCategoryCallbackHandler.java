@@ -8,10 +8,14 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import ru.ssharaev.bookmarkkeeper.model.Bookmark;
 import ru.ssharaev.bookmarkkeeper.model.CallbackData;
 import ru.ssharaev.bookmarkkeeper.model.CallbackType;
+import ru.ssharaev.bookmarkkeeper.model.PaginationBookmarkList;
 import ru.ssharaev.bookmarkkeeper.repository.BookmarkRepository;
 import ru.ssharaev.bookmarkkeeper.service.response.TelegramResponseService;
 
 import java.util.List;
+import java.util.Objects;
+
+import static ru.ssharaev.bookmarkkeeper.service.response.TelegramResponseUtils.PAGE_SIZE;
 
 /**
  * @author slawi
@@ -31,9 +35,31 @@ public class FindByCategoryCallbackHandler implements CallbackHandler {
 
     @Override
     public void handle(CallbackQuery callbackQuery, CallbackData callbackData) {
+        log.info("Callback data: {}", callbackData);
+
+        if (Objects.isNull(callbackData.getPage())) {
+            handleNewSearch(callbackQuery, callbackData);
+            return;
+        }
+        handleNextPage(callbackQuery, callbackData);
+    }
+
+    private void handleNewSearch(CallbackQuery callbackQuery, CallbackData callbackData) {
         Long chatId = callbackQuery.getMessage().getChatId();
-        List<Bookmark> bookmarkList = bookmarkRepository.findBookmarkByCategoryIdAndUserId(callbackData.getId(), chatId);
-        responseService.sendBookmarkList(bookmarkList, chatId);
-        responseService.sendDeleteKeyboard(callbackQuery);
+        int overallCountBookmark = bookmarkRepository.findCountBookmarkByCategoryId(chatId, callbackData.getId());
+        List<Bookmark> bookmarkList = bookmarkRepository.findPagingBookmarkByCategoryId(chatId, callbackData.getId(), PAGE_SIZE, 0);
+        PaginationBookmarkList paginationBookmarkList = new PaginationBookmarkList(overallCountBookmark, 0, bookmarkList, PAGE_SIZE, callbackData.getId());
+        responseService.sendBookmarkListPage(chatId, paginationBookmarkList, CallbackType.CATEGORY);
+        responseService.sendDeleteMessage(callbackQuery);
+        responseService.sendShowBookmarkAnswerCallback(callbackQuery);
+    }
+
+    private void handleNextPage(CallbackQuery callbackQuery, CallbackData callbackData) {
+        Long chatId = callbackQuery.getMessage().getChatId();
+        int overallCountBookmark = bookmarkRepository.findCountBookmarkByCategoryId(chatId, callbackData.getId());
+        List<Bookmark> bookmarkList = bookmarkRepository.findPagingBookmarkByCategoryId(chatId, callbackData.getId(), PAGE_SIZE, callbackData.getPage() * PAGE_SIZE);
+        PaginationBookmarkList paginationBookmarkList = new PaginationBookmarkList(overallCountBookmark, callbackData.getPage(), bookmarkList, PAGE_SIZE, callbackData.getId());
+        responseService.sendUpdateBookmarkListPage(callbackQuery, paginationBookmarkList, CallbackType.CATEGORY);
+        responseService.sendShowBookmarkAnswerCallback(callbackQuery);
     }
 }

@@ -11,28 +11,32 @@ import ru.ssharaev.bookmarkkeeper.model.CommandType;
 import ru.ssharaev.bookmarkkeeper.repository.CategoryRepository;
 import ru.ssharaev.bookmarkkeeper.service.response.TelegramResponseService;
 
-import java.util.List;
+import static ru.ssharaev.bookmarkkeeper.service.response.TelegramResponseUtils.CATEGORY_SAVED;
 
 /**
+ * TODO добавить обработку ошибок - команда без аргумента, команда без команды
+ *
  * @author slawi
- * @since 18.11.2020
+ * @since 21.11.2020
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class FindByCategoryCommandHandler implements CommandHandler {
+public class AddCategoryCommandHandler implements CommandHandler {
     private final CategoryRepository categoryRepository;
     private final TelegramResponseService responseService;
 
     @Override
     public CommandType getType() {
-        return CommandType.CATEGORIES;
+        return CommandType.ADD_CATEGORY;
     }
 
     @Override
     public void handleCommand(Update update) throws UnknownCommandException {
-        log.info("Create message with categories");
-        List<BookmarkCategory> categoryList = categoryRepository.findByUserId(update.getMessage().getChatId());
-        responseService.sendFindByCategoryResponse(update.getMessage().getChatId(), categoryList);
+        BookmarkCategory category = new BookmarkCategory();
+        String categoryName = fetchArg(update.getMessage());
+        category.setName(categoryName);
+        categoryRepository.save(category);
+        responseService.sendTextMessage(update.getMessage().getChatId(), String.format(CATEGORY_SAVED, categoryName));
     }
 }

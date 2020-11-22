@@ -1,9 +1,8 @@
 package ru.ssharaev.bookmarkkeeper.service.response;
 
-import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 
 /**
  * @author slawi
@@ -11,15 +10,9 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
  */
 public interface TelegramMessageSender {
 
-    public void sendMessage(SendMessage sendMessage);
+    public void sendMessage(BotApiMethod sendMessage);
 
-    default void sendMessage(EditMessageText message) {
+    public void sendMessage(SendDocument sendMessage);
 
-    }
-
-    ;
-
-    public void sendAnswerCallBackQuery(AnswerCallbackQuery answer);
-
-    public void sendEditMessageReplyMarkup(EditMessageReplyMarkup answer);
+    public void sendMessage(SendPhoto sendMessage);
 }

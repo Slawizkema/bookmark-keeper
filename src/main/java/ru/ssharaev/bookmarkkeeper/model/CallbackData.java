@@ -1,10 +1,15 @@
 package ru.ssharaev.bookmarkkeeper.model;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * Модель для передачи типа колбэка и идентификатора сущности.
@@ -17,9 +22,19 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 @Slf4j
 @JsonAutoDetect
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonInclude(Include.NON_NULL)
 public class CallbackData {
-    private final CallbackType type;
-    private final long id;
+    private CallbackType type;
+    private long id;
+    private Integer page;
+
+    public CallbackData(CallbackType type, long id) {
+        this.type = type;
+        this.id = id;
+        page = null;
+    }
 
     public static String toJson(CallbackData callbackData, ObjectMapper objectMapper) {
         try {
