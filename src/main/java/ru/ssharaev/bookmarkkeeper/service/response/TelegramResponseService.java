@@ -31,7 +31,7 @@ public class TelegramResponseService {
     }
 
     public void sendSaveResponse(long chatId, Bookmark bookmark, List<BookmarkCategory> categoryList) {
-        messageSender.sendMessage(messageRender.createSaveBookmarkSendMessage(chatId, SELECT_CATEGORY, bookmark.getMessageId(), categoryList));
+        messageSender.sendMessage(messageRender.createSaveBookmarkSendMessage(chatId, bookmark.getMessageId(), categoryList));
     }
 
     public void sendFindByCategoryResponse(long chatId, List<BookmarkCategory> bookmarkCategories) {

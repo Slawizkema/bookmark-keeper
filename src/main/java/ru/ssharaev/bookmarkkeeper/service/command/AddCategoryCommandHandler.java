@@ -5,16 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.ssharaev.bookmarkkeeper.exception.UnknownCommandException;
+import ru.ssharaev.bookmarkkeeper.exception.BookmarkKeeperException;
 import ru.ssharaev.bookmarkkeeper.model.BookmarkCategory;
 import ru.ssharaev.bookmarkkeeper.model.CommandType;
 import ru.ssharaev.bookmarkkeeper.repository.CategoryRepository;
 import ru.ssharaev.bookmarkkeeper.service.response.TelegramResponseService;
 
+import java.util.Optional;
 import static ru.ssharaev.bookmarkkeeper.service.response.TelegramResponseUtils.CATEGORY_SAVED;
 
 /**
- * TODO добавить обработку ошибок - команда без аргумента, команда без команды
  *
  * @author slawi
  * @since 21.11.2020
@@ -32,9 +32,10 @@ public class AddCategoryCommandHandler implements CommandHandler {
     }
 
     @Override
-    public void handleCommand(Update update) throws UnknownCommandException {
+    public void handleCommand(Update update) throws BookmarkKeeperException {
         BookmarkCategory category = new BookmarkCategory();
-        String categoryName = fetchArg(update.getMessage());
+        String categoryName = Optional.ofNullable(fetchArg(update.getMessage()))
+                .orElseThrow(() -> new BookmarkKeeperException("Не удалось разобрать категорию!"));
         category.setName(categoryName);
         categoryRepository.save(category);
         responseService.sendTextMessage(update.getMessage().getChatId(), String.format(CATEGORY_SAVED, categoryName));

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.ssharaev.bookmarkkeeper.exception.UnknownCommandException;
+import ru.ssharaev.bookmarkkeeper.exception.BookmarkKeeperException;
 import ru.ssharaev.bookmarkkeeper.model.CommandType;
 import ru.ssharaev.bookmarkkeeper.model.Tag;
 import ru.ssharaev.bookmarkkeeper.repository.TagRepository;
@@ -30,7 +30,7 @@ public class FindByTagCommandHandler implements CommandHandler {
     }
 
     @Override
-    public void handleCommand(Update update) throws UnknownCommandException {
+    public void handleCommand(Update update) throws BookmarkKeeperException {
         log.info("Create message with tags");
         List<Tag> tagList = tagRepository.findByUserId(update.getMessage().getChatId());
         responseService.sendFindByTagResponse(update.getMessage().getChatId(), tagList);

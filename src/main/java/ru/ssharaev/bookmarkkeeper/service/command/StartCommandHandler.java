@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.ssharaev.bookmarkkeeper.exception.UnknownCommandException;
+import ru.ssharaev.bookmarkkeeper.exception.BookmarkKeeperException;
 import ru.ssharaev.bookmarkkeeper.model.BookmarkCategory;
 import ru.ssharaev.bookmarkkeeper.model.CommandType;
 import ru.ssharaev.bookmarkkeeper.repository.CategoryRepository;
@@ -31,7 +31,7 @@ public class StartCommandHandler implements CommandHandler {
     }
 
     @Override
-    public void handleCommand(Update update) throws UnknownCommandException {
+    public void handleCommand(Update update) throws BookmarkKeeperException {
         long userId = update.getMessage().getChatId();
         if (categoryRepository.findByUserId(userId).isEmpty()) {
             categoryRepository.saveAll(START_CATEGORY.stream().map(e -> new BookmarkCategory().setName(e).setUserId(userId)).collect(Collectors.toList()));

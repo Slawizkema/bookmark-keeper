@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.ssharaev.bookmarkkeeper.exception.UnknownCommandException;
+import ru.ssharaev.bookmarkkeeper.exception.BookmarkKeeperException;
 import ru.ssharaev.bookmarkkeeper.model.Bookmark;
 import ru.ssharaev.bookmarkkeeper.model.CallbackType;
 import ru.ssharaev.bookmarkkeeper.model.CommandType;
@@ -34,7 +34,7 @@ public class FindAllBookmarkCommandHandler implements CommandHandler {
     }
 
     @Override
-    public void handleCommand(Update update) throws UnknownCommandException {
+    public void handleCommand(Update update) throws BookmarkKeeperException {
         Long chatId = update.getMessage().getChatId();
         int overallCountBookmark = bookmarkRepository.findCountBookmarkByUserId(chatId);
         List<Bookmark> bookmarkList = bookmarkRepository.findPagingBookmarkByUserId(chatId, PAGE_SIZE, 0);

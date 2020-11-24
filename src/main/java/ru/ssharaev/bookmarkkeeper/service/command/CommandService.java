@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.EntityType;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.ssharaev.bookmarkkeeper.exception.UnknownCommandException;
+import ru.ssharaev.bookmarkkeeper.exception.BookmarkKeeperException;
 import ru.ssharaev.bookmarkkeeper.model.CommandType;
 
 import java.util.NoSuchElementException;
@@ -24,15 +24,15 @@ import static ru.ssharaev.bookmarkkeeper.TelegramMessageUtils.fetchEntityValue;
 public class CommandService {
     private final CommandHandlerProvider commandHandlerProvider;
 
-    public void handleCommand(Update update) throws UnknownCommandException {
+    public void handleCommand(Update update) throws BookmarkKeeperException {
         CommandType command = fetchCommand(update.getMessage());
         log.info("Execute command {}", command);
         commandHandlerProvider.getCommandHandler(command).handleCommand(update);
     }
 
-    private CommandType fetchCommand(Message message) throws UnknownCommandException {
+    private CommandType fetchCommand(Message message) throws BookmarkKeeperException {
         if (!message.hasEntities()) {
-            throw new UnknownCommandException("В сообщении нет команды!");
+            throw new BookmarkKeeperException("В сообщении нет команды!");
         }
         try {
             String botCommand = fetchEntityValue(message, EntityType.BOTCOMMAND)
@@ -40,7 +40,7 @@ public class CommandService {
                     .toUpperCase();
             return CommandType.valueOf(botCommand);
         } catch (IllegalArgumentException | NoSuchElementException e) {
-            throw new UnknownCommandException("В сообщении нет команды!", e);
+            throw new BookmarkKeeperException("В сообщении нет команды!", e);
         }
     }
 

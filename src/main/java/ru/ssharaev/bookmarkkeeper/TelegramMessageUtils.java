@@ -31,7 +31,6 @@ public final class TelegramMessageUtils {
     }
 
     /**
-     * TODO: Изменить exception
      * Вытаскивает значение необходимого entity
      *
      * @param message    сообщение клиента

@@ -23,6 +23,9 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     @Query(value = "select count(*) from bookmark where user_id = :userId", nativeQuery = true)
     int findCountBookmarkByUserId(@Param("userId") Long userId);
 
+    @Query(value = "select * from bookmark where user_id = :userId order by random() order 1", nativeQuery = true)
+    Bookmark findRandomBookmark(@Param("userId") Long userId);
+
     @Query(value = "select * from bookmark where user_id = :userId limit :pageSize offset :offset", nativeQuery = true)
     List<Bookmark> findPagingBookmarkByUserId(
             @Param("userId") Long userId,

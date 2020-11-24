@@ -31,11 +31,10 @@ import static ru.ssharaev.bookmarkkeeper.service.response.TelegramResponseUtils.
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TelegramMessageRender {
     private final ButtonRenderer buttonRenderer;
-    private final TextRenderer textRenderer;
-    private final BookmarkMessageRendererProvider messageRendererProvider;
+    private final BookmarkMessageRendererProvider bookmarkMessageRendererProvider;
 
     public PartialBotApiMethod<Message> createBookmarkSendMessage(long chatId, Bookmark bookmark) {
-        return messageRendererProvider.getRenderer(bookmark.getType()).renderBookmark(bookmark, chatId);
+        return bookmarkMessageRendererProvider.getRenderer(bookmark.getType()).renderBookmark(bookmark, chatId);
     }
 
     public SendMessage createFindByCategoryMessage(long chatId, List<BookmarkCategory> categoryList) {
@@ -60,8 +59,7 @@ public class TelegramMessageRender {
     }
 
 
-    public SendMessage createSaveBookmarkSendMessage(long chatId, String messageText, String messageId, List<BookmarkCategory> categoryList) {
-        log.info("Create SendMessage for chatId={}, text ='{}'", chatId, messageText);
+    public SendMessage createSaveBookmarkSendMessage(long chatId, String messageId, List<BookmarkCategory> categoryList) {
 
         List<List<InlineKeyboardButton>> buttons = categoryList.stream()
                 .map(e -> List.of(buttonRenderer.getCategoryButton(e, CallbackType.SAVE)))
@@ -91,7 +89,7 @@ public class TelegramMessageRender {
         return new EditMessageText()
                 .setChatId(chatId)
                 .setMessageId((int) editedMessageId)
-                .setText(textRenderer.printFullBookmark(bookmark))
+                .setText(bookmarkMessageRendererProvider.getCommonBuilder(bookmark).toString())
                 .disableWebPagePreview();
     }
 
@@ -104,7 +102,7 @@ public class TelegramMessageRender {
             return new SendMessage(chatId, EMPTY_BOOKMARK_LIST);
         }
 
-        String messageText = textRenderer.renderBookmarkList(paginationBookmarkList);
+        String messageText = bookmarkMessageRendererProvider.renderBookmarkList(paginationBookmarkList);
 
         List<InlineKeyboardButton> inlineBookmarkList = buttonRenderer.getBookmarkButtonList(paginationBookmarkList);
         List<InlineKeyboardButton> inlinePaginationKeyboard = buttonRenderer.createInlinePaginationKeyboard(paginationBookmarkList, callbackType);
@@ -131,7 +129,7 @@ public class TelegramMessageRender {
                     .setText(EMPTY_BOOKMARK_LIST);
         }
 
-        String messageText = textRenderer.renderBookmarkList(paginationBookmarkList);
+        String messageText = bookmarkMessageRendererProvider.renderBookmarkList(paginationBookmarkList);
 
         List<InlineKeyboardButton> inlineBookmarkList = buttonRenderer.getBookmarkButtonList(paginationBookmarkList);
         List<InlineKeyboardButton> inlinePaginationKeyboard = buttonRenderer.createInlinePaginationKeyboard(paginationBookmarkList, callbackType);

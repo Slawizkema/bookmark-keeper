@@ -18,7 +18,6 @@ public class Bot extends TelegramWebhookBot {
     private final String botToken;
     private final String botPath;
 
-
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         SendMessage replyMessageToUser = new SendMessage();

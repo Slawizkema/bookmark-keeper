@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.ssharaev.bookmarkkeeper.exception.UnknownCommandException;
+import ru.ssharaev.bookmarkkeeper.exception.BookmarkKeeperException;
 import ru.ssharaev.bookmarkkeeper.model.BookmarkCategory;
 import ru.ssharaev.bookmarkkeeper.model.CommandType;
 import ru.ssharaev.bookmarkkeeper.repository.CategoryRepository;
@@ -35,20 +35,20 @@ public class DeleteBookmarkCommandHandler implements CommandHandler {
     }
 
     @Override
-    public void handleCommand(Update update) throws UnknownCommandException {
+    public void handleCommand(Update update) throws BookmarkKeeperException {
         try {
             String categoryName = fetchArg(update.getMessage());
             if (!isNullOrEmpty(categoryName)) {
                 handleDeleteCategory(update, categoryName);
                 return;
             }
-        } catch (UnknownCommandException e) {
-            throw new UnknownCommandException("Не смогли удалить категорию", e);
+        } catch (BookmarkKeeperException e) {
+            throw new BookmarkKeeperException("Не смогли удалить категорию", e);
         }
         handleDeleteBookmark(update);
     }
 
-    public void handleDeleteBookmark(Update update) throws UnknownCommandException {
+    public void handleDeleteBookmark(Update update) throws BookmarkKeeperException {
         if (Objects.isNull(update.getMessage().getReplyToMessage())) {
             sendHelpResponse();
             return;
@@ -60,18 +60,18 @@ public class DeleteBookmarkCommandHandler implements CommandHandler {
             responseService.sendTextMessage(update.getMessage().getChatId(), "Закладка удалена!");
         } catch (Exception e) {
             sendHelpResponse();
-            throw new UnknownCommandException("Не смогли удалить закладку", e);
+            throw new BookmarkKeeperException("Не смогли удалить закладку", e);
         }
     }
 
-    private void handleDeleteCategory(Update update, String categoryName) throws UnknownCommandException {
+    private void handleDeleteCategory(Update update, String categoryName) throws BookmarkKeeperException {
         try {
             BookmarkCategory category = categoryRepository.findFirstByName(categoryName);
             categoryRepository.delete(category);
             responseService.sendTextMessage(update.getMessage().getChatId(), "Категория удалена!");
         } catch (Exception e) {
             sendHelpResponse();
-            throw new UnknownCommandException("Не смогли удалить категорию", e);
+            throw new BookmarkKeeperException("Не смогли удалить категорию", e);
         }
     }
 
